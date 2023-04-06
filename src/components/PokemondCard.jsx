@@ -14,26 +14,25 @@ const getPokemonById = async (url) => {
 
 const PokemondCard = ({ pokemonData }) => {
   const [pokemon, setPokemon] = useState(null);
-  const navigate = useNavigate()
-
-  const loadPokemon = async () => {
-    const pokemonInfo = await getPokemonById(pokemonData.url);
-
-    setPokemon(pokemonInfo);
-  };
+  const navigate = useNavigate();
 
   const handleClickNavigate = () => {
-    navigate(`/pokedex/${pokemon.id}`)
-  }
+    navigate(`/pokedex/${pokemon.id}`);
+  };
 
   useEffect(() => {
+    const loadPokemon = async () => {
+      const pokemonInfo = await getPokemonById(pokemonData.url);
+
+      setPokemon(pokemonInfo);
+    };
     loadPokemon();
   }, []);
 
   return (
     <>
       {pokemon && (
-        <article onClick={handleClickNavigate} className='hover:cursor-pointer'>
+        <article onClick={handleClickNavigate} className="hover:cursor-pointer">
           <header>
             <div></div>
             <div style={{ width: 150 }}>

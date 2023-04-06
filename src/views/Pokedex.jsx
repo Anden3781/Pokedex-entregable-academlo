@@ -1,33 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { UserContext } from '../contexts/UserContext';
-import axios from 'axios';
 import PokemondCard from '../components/PokemondCard';
 import { usePagination } from '../hooks/usePagination';
-
-const getAllPokemons = async () => {
-  try {
-    const res = await axios.get('https://pokeapi.co/api/v2/pokemon/?limit=2000');
-
-    return res.data.results;
-  } catch (error) {
-    console.error(error);
-  }
-};
+import { useLoaderData } from 'react-router-dom';
 
 const Pokedex = () => {
   const { user } = useContext(UserContext);
-  const [pokemons, setPokemons] = useState([]);
+  const { pokemons, types } = useLoaderData();
   const pokemonsPagination = usePagination(pokemons, 50);
-
-  const loadAllPokemons = async () => {
-    const allPokemons = await getAllPokemons();
-
-    setPokemons(allPokemons);
-  };
-
-  useEffect(() => {
-    loadAllPokemons();
-  }, []);
 
   return (
     <div>
@@ -39,12 +19,25 @@ const Pokedex = () => {
       <div className="flex flex-row gap-2">
         {pokemonsPagination.pages.map((page) => (
           <button
+            key={page}
             onClick={() => pokemonsPagination.changePageTo(page)}
             className={pokemonsPagination.currentPage === page ? 'text-red-500' : ''}
           >
             {page}
           </button>
         ))}
+      </div>
+
+      <div>
+        <form>
+          <select name="pokemon_type">
+            {types.map((type) => (
+              <option key={type.url} value={type.name}>
+                {type.name}
+              </option>
+            ))}
+          </select>
+        </form>
       </div>
 
       <section>
