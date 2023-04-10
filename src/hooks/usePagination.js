@@ -6,20 +6,17 @@ export const usePagination = (itemList, itemQuantityPerPage) => {
   const totalPages = Math.ceil(itemList.length / itemQuantityPerPage);
 
   const lowerLimit = (currentPage - 1) * itemQuantityPerPage;
-
   const upperLimit = currentPage * itemQuantityPerPage - 1;
 
   const listSlice = itemList.slice(lowerLimit, upperLimit + 1);
 
   const nextPage = () => {
     const newPage = currentPage + 1;
-
     if (newPage <= totalPages) setCurrentPage(newPage);
   };
 
   const previousPage = () => {
     const newPage = currentPage - 1;
-
     if (newPage >= 1) setCurrentPage(newPage);
   };
 
@@ -29,10 +26,20 @@ export const usePagination = (itemList, itemQuantityPerPage) => {
     else setCurrentPage(newPage);
   };
 
-  const pages = Array(totalPages)
-    .fill()
+  let startPage = Math.max(currentPage - 3, 1);
+  let endPage = Math.min(currentPage + 3, totalPages);
 
-    .map((_, i) => i + 1);
+  if (endPage - startPage < 6) {
+    if (currentPage < 4) {
+      endPage = Math.min(startPage + 6, totalPages);
+    } else {
+      startPage = Math.max(endPage - 6, 1);
+    }
+  }
+
+  const pages = Array(endPage - startPage + 1)
+    .fill()
+    .map((_, i) => startPage + i);
 
   useEffect(() => {
     changePageTo(currentPage);
@@ -40,15 +47,11 @@ export const usePagination = (itemList, itemQuantityPerPage) => {
 
   return {
     currentPage,
-
     listSlice,
-
     pages,
-
     nextPage,
-
     previousPage,
-
     changePageTo,
+    hasNextPage: currentPage < totalPages,
   };
 };
